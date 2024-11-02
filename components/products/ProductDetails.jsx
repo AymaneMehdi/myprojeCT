@@ -28,7 +28,7 @@ const ProductDetails = ({ product }) => {
       product: product._id,
       name: product.name,
       price: product.price,
-      image: product.images[0].url,
+      image: product.image,
       stock: product.stock,
       seller: product.seller,
     });

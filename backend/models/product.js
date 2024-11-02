@@ -13,31 +13,14 @@ const productSchema = new mongoose.Schema({
     type: Number,
     required: [true, "Please enter product price"],
   },
-  images: [
+  image:
     {
-      public_id: {
-        type: String,
-      },
-      url: {
-        type: String,
-      },
+      type: String,
+        required: true,
     },
-  ],
-
   category: {
     type: String,
     required: [true, "Please enter product category"],
-    enum: {
-      values: [
-        "Electronics",
-        "Cameras",
-        "Laptops",
-        "Accessories",
-        "Headphones",
-        "Sports",
-      ],
-      message: "Please select correct category",
-    },
   },
   seller: {
     type: String,

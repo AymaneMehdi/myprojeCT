@@ -13,27 +13,44 @@ const NewProduct = () => {
     price: "",
     stock: "",
     category: "",
+    image: ""
   });
 
-  const { name, description, seller, price, stock, category } = product;
+  const { name, description, seller, price, stock, category, image } = product;
 
   const onChange = (e) => {
     setProduct({ ...product, [e.target.name]: e.target.value });
   };
 
-  const categories = [
-    "Electronics",
-    "Cameras",
-    "Laptops",
-    "Accessories",
-    "Headphones",
-    "Sports",
-  ];
+  const categories = ["Shoes"];
 
   const submitHandler = (e) => {
     e.preventDefault();
+    const formattedProduct = {
+      ...product,
+      price: parseFloat(product.price),
+      stock: parseInt(product.stock, 10),
+    };
 
-    newProduct(product);
+    console.log("Submitting product:", formattedProduct); // Log the product object
+    newProduct(formattedProduct); // Send formatted product data
+  };
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", "duqax7wj");
+    try {
+      const response = await fetch("https://api.cloudinary.com/v1_1/drukcn21i/upload", {
+        method: "POST",
+        body: formData,
+      });
+      const data = await response.json();
+      setProduct({ ...product, image: data.secure_url });
+    } catch (error) {
+      console.error("Error uploading image:", error);
+    }
   };
 
   return (
@@ -44,7 +61,7 @@ const NewProduct = () => {
 
       <form onSubmit={submitHandler}>
         <div className="mb-4">
-          <label className="block mb-1"> Name </label>
+          <label className="block mb-1">Name</label>
           <input
             type="text"
             className="appearance-none border border-gray-200 bg-gray-100 rounded-md py-2 px-3 hover:border-gray-400 focus:outline-none focus:border-gray-400 w-full"
@@ -57,7 +74,7 @@ const NewProduct = () => {
         </div>
 
         <div className="mb-4 mt-5">
-          <label className="block mb-1"> Description </label>
+          <label className="block mb-1">Description</label>
           <textarea
             rows="4"
             className="appearance-none border border-gray-200 bg-gray-100 rounded-md py-2 px-3 hover:border-gray-400 focus:outline-none focus:border-gray-400 w-full"
@@ -69,56 +86,57 @@ const NewProduct = () => {
           ></textarea>
         </div>
 
+        <div className="mb-4 mt-5">
+          <label htmlFor="image1" className="block text-gray-700 font-medium mb-2">
+            Image:
+          </label>
+          <input
+            type="file"
+            id="image1"
+            name="image"
+            onChange={handleImageUpload}
+            className="w-full p-2 border border-gray-300 rounded-lg"
+            required
+          />
+        </div>
+
+        {image && (
+          <div className="mb-4">
+            <img src={image} alt="Uploaded Preview" className="w-32 h-32 object-cover" />
+          </div>
+        )}
+
         <div className="grid md:grid-cols-2 gap-x-2 mt-5">
           <div className="mb-4">
-            <label className="block mb-1"> Price </label>
-            <div className="relative">
-              <div className="col-span-2">
-                <input
-                  type="text"
-                  className="appearance-none border border-gray-200 bg-gray-100 rounded-md py-2 px-3 hover:border-gray-400 focus:outline-none focus:border-gray-400 w-full"
-                  placeholder="0.00"
-                  name="price"
-                  value={price}
-                  onChange={onChange}
-                  required
-                />
-              </div>
-            </div>
+            <label className="block mb-1">Price</label>
+            <input
+              type="number"
+              className="appearance-none border border-gray-200 bg-gray-100 rounded-md py-2 px-3 hover:border-gray-400 focus:outline-none focus:border-gray-400 w-full"
+              placeholder="0.00"
+              name="price"
+              value={price}
+              onChange={onChange}
+              required
+            />
           </div>
+
           <div className="mb-4">
-            <label className="block mb-1"> Category </label>
-            <div className="relative">
-              <select
-                className="block appearance-none border border-gray-200 bg-gray-100 rounded-md py-2 px-3 hover:border-gray-400 focus:outline-none focus:border-gray-400 w-full"
-                name="category"
-                value={category}
-                onChange={onChange}
-                required
-              >
-                {categories.map((category) => (
-                  <option key={category} value={category}>
-                    {category}
-                  </option>
-                ))}
-              </select>
-              <i className="absolute inset-y-0 right-0 p-2 text-gray-400">
-                <svg
-                  width="22"
-                  height="22"
-                  className="fill-current"
-                  viewBox="0 0 20 20"
-                >
-                  <path d="M7 10l5 5 5-5H7z"></path>
-                </svg>
-              </i>
-            </div>
+            <label className="block mb-1">Category</label>
+              <input
+              type="text"
+              className="block appearance-none border border-gray-200 bg-gray-100 rounded-md py-2 px-3 hover:border-gray-400 focus:outline-none focus:border-gray-400 w-full"
+              name="category"
+              value={category}
+              onChange={onChange}
+              required
+            />
+            
           </div>
         </div>
 
         <div className="grid md:grid-cols-2 gap-x-2 mt-5">
           <div className="mb-4">
-            <label className="block mb-1"> Seller / Brand </label>
+            <label className="block mb-1">Brand</label>
             <input
               type="text"
               className="appearance-none border border-gray-200 bg-gray-100 rounded-md py-2 px-3 hover:border-gray-400 focus:outline-none focus:border-gray-400 w-full"
@@ -131,20 +149,16 @@ const NewProduct = () => {
           </div>
 
           <div className="mb-4">
-            <label className="block mb-1"> Stock </label>
-            <div className="relative">
-              <div className="col-span-2">
-                <input
-                  type="text"
-                  className="appearance-none border border-gray-200 bg-gray-100 rounded-md py-2 px-3 hover:border-gray-400 focus:outline-none focus:border-gray-400 w-full"
-                  placeholder="0"
-                  name="stock"
-                  value={stock}
-                  onChange={onChange}
-                  required
-                />
-              </div>
-            </div>
+            <label className="block mb-1">Stock</label>
+            <input
+              type="number"
+              className="appearance-none border border-gray-200 bg-gray-100 rounded-md py-2 px-3 hover:border-gray-400 focus:outline-none focus:border-gray-400 w-full"
+              placeholder="0"
+              name="stock"
+              value={stock}
+              onChange={onChange}
+              required
+            />
           </div>
         </div>
 

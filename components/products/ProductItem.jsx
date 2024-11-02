@@ -12,7 +12,7 @@ const ProductItem = ({ product }) => {
       product: product._id,
       name: product.name,
       price: product.price,
-      image: product.images[0].url,
+      image: product.image,
       stock: product.stock,
       seller: product.seller,
     });
@@ -31,8 +31,8 @@ const ProductItem = ({ product }) => {
           >
             <Image
               src={
-                product?.images[0]
-                  ? product?.images[0].url
+                product?.image
+                  ? product?.image
                   : "/images/default_product.png"
               }
               alt="product anme"
